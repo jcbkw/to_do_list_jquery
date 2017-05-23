@@ -1,0 +1,20 @@
+.table {
+    display: table;
+}
+
+.table .row {
+    display: table-row;
+}
+
+.table .col {
+    display: table-cell;
+}
+
+input.seamless {
+    
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    
+}

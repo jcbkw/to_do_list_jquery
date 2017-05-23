@@ -1,0 +1,26 @@
+.main {
+    
+    height: 700px;
+    text-align: center;
+    
+}
+
+.link {
+    
+    text-decoration:none;
+    
+}
+
+.form-container {
+    margin-top: 50px;
+    width: 600px;
+    height: 300px;
+    display:inline-block;
+}
+
+.wrapper {
+    
+    padding: 20px;
+  
+}
+

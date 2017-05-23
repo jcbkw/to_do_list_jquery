@@ -1,0 +1,155 @@
+html, 
+body, 
+ul {
+   
+    margin: 0;
+    padding: 0;
+}
+
+
+.header {
+
+    text-align: center;
+    padding: 20px;
+
+}
+
+.item-message {
+
+    width: 100%;
+    
+}
+
+.new-entry {
+    
+   padding-left: 15px;
+   
+}
+
+.new-item-list .row {
+    
+    color: #888;
+    
+}
+
+
+.plus-button {
+    
+    background:none;
+    border:none;
+    outline:none;
+    
+}
+.item-list {
+    
+    list-style-type: none;
+    vertical-align: middle;
+    
+}
+
+main .header-icon {
+    
+    color: #009c1e;
+    font-size: 20px;
+    transition: all .25s ease-out;
+    
+}
+
+.header-icon:hover {
+    
+    font-size: 30px;
+    transform: rotate(90deg);
+    
+}
+
+.image-wrapper {
+
+    width: 60px;
+
+}
+
+.col {
+    
+    vertical-align: middle;
+    height: 48px;
+    border-bottom: 1px solid #ccc;
+    
+}
+
+.col .new-entry {
+    
+   border-bottom: none;
+   
+    
+}
+
+.col .plus-button {
+    
+   /*text-align: right;*/
+    
+}
+
+.new-entry-btn-wrap {
+    
+    width: 48px;
+    text-align: center;
+    
+}
+
+.action-item{
+    
+    border: none;
+    background: none;
+    outline: none;
+    color: #888;
+    
+}
+
+.action-item:hover{
+    
+    color: #333;
+    
+}
+
+.col.action {
+    
+    width: 48px;
+    text-align: center;
+    
+}
+
+.row:last-child .col  {
+    
+    border-bottom: none;
+    
+} 
+input[required]:hover {
+    
+    border: 1px solid red;
+    
+}
+
+.row.checked {
+    
+    color: #ccc;
+    cursor: default;
+    
+}
+
+.row.checked .item-message{
+    
+    text-decoration: line-through;
+    
+}
+
+.editing {
+    
+   color: blue;
+    
+}
+
+.row.checked .edit-item{
+    
+    display: none;
+    
+}

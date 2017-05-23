@@ -1,0 +1,10 @@
+form .form-control + .form-control {
+    
+    margin-top: 5px;
+}
+
+.header{
+    
+    text-align: center;
+    
+}
