@@ -11,7 +11,7 @@
             $figureElement         = $("<figure>").addClass("img-wrapper"),
             $newEntryForm          = $("<form>"),
             $mainElement           = $("<main>").addClass("main-wrapper"),
-            $itemList              = $("ul .item-list").clone().addClass("table entry-list"),
+            $itemList              = $($newEntryTable).clone().addClass("entry-list"),
             $section1              = $("<section>").addClass("header-wrapper container col-md-5 col-md-offset-4"),
             $section2              = $("<section>").addClass("main-content container col-md-5 col-md-offset-4"),
             $header                = $("<header>").addClass("header text-primary-color"),
@@ -51,150 +51,52 @@
             
             $("body").append($mainElement);
             
-              debugger;
     }
 
-//  function buildToDoPage (title, entries) {
-//        var figureElement = document.createElement("figure"),
-//            textInput = document.createElement("input"),
-//            mainElement = document.createElement("main"),
-//            section1 = document.createElement("section"),
-//            section2 = document.createElement("section"),
-//            section3 = document.createElement("section"),
-//            imgElement = document.createElement("div"),
-//            header = document.createElement("header"),
-//            addBtn = document.createElement("button"),
-//            h1Element = document.createElement("h1"),
-//            newEntryTable = document.createElement("ul"),
-//            content = document.createTextNode(title),
-//            newEntryInputWrapper = document.createElement("div"),
-//            newEntryForm = document.createElement("form"),
-//            newEntryRow = document.createElement("li"),
-//            
-            // itemList,
-//            newEntryButtonWrapper;
-//
-//            -newEntryTable.classList.add( "table", "item-list");
-//            -addBtn.classList.add("plus-button");
-//            -mainElement.classList.add( "main-wrapper");
-//            -section1.classList.add("header-wrapper", "container", "col-md-5", "col-md-offset-4");
-//            -section2.classList.add("main-content", "container", "col-md-5", "col-md-offset-4");
-//            -section3.classList.add("main-content", "container", "col-md-5", "col-md-offset-4");
-//            -header.classList.add("header", "text-primary-color");
-//            -newEntryRow.classList.add("row", "light-primary-color");
-//            -figureElement.classList.add("img-wrapper");
-//            -imgElement.classList.add("header-icon", "fa",  "fa-plus-circle");
-//            -textInput.classList.add("new-entry", "seamless");
-//            -newEntryInputWrapper.classList.add("col");
-//            
-//            
-//            -textInput.setAttribute("name", "message");
-//            -textInput.setAttribute("autofocus", "autofocus");
-//            -textInput.setAttribute("autocomplete", "off");
-//            -textInput.setAttribute("placeholder", "Enter a new note");
-//            -addBtn.setAttribute("type", "submit");
-////          -imgElement.setAttribute("src", "../images/plus-4-48.png");
-//            -imgElement.setAttribute("alt", "Plus one");
-//
-//            -newEntryButtonWrapper = newEntryInputWrapper.cloneNode(true);
-//            -newEntryButtonWrapper.classList.add("new-entry-btn-wrap");
-//            -itemList = newEntryTable.cloneNode(true);
-//            -itemList.classList.add( "table", "entry-list");
-//            -newEntryTable.classList.add( "new-item-list");
-//            
-//            -figureElement.appendChild(imgElement);
-//            -addBtn.appendChild(figureElement);
-//            -newEntryInputWrapper.appendChild(textInput);
-//            -newEntryButtonWrapper.appendChild(addBtn);
-//            -newEntryRow.appendChild(newEntryInputWrapper);
-//            -newEntryRow.appendChild(newEntryButtonWrapper);
-//            -h1Element.appendChild(content);
-//            -header.appendChild(h1Element);
-//            -newEntryTable.appendChild(newEntryRow);
-//            -newEntryForm.appendChild(newEntryTable);
-//            
-//            -section1.appendChild(header);
-//            -section2.appendChild(newEntryForm);
-//            -section2.appendChild(itemList);
-//            -mainElement.appendChild(section1);
-//            -mainElement.appendChild(section2);
-//
-//            -document.body.appendChild(mainElement);
-//            
-//  } 
-
-    function buildATodoList(dataArray){
+    function buildATodoList(dataObject){
     
-        var ulElement = document.querySelector(".entry-list"),
+        var ulElement = $(".entry-list"),
             row;
 
-        for (var i = 0; i < dataArray.length; i += 1) {
+            $.each(dataObject, function (i, note) {
 
-            var todoItem = dataArray[i];
+            row = createToDoListItem(note);
 
-            row = createToDoListItem(todoItem);
-
-            ulElement.appendChild(row);  
+            ulElement.append(row);  
             
-        }
+        });
     
     }
     
     function createToDoListItem (todoItem) {
         
-        var checkElement,
-            deleteElement,
-            deleteColumn,
-            editElement,
-            editColumn,
-            checkColumn,
-            column,
-            row,
-            todoMessage,
-            listText;
-        
-        row = document.createElement("li");       
-        listText = document.createTextNode(todoItem.message);
-        checkElement = document.createElement("button");
-        deleteElement = document.createElement("button");
-        editElement = document.createElement("button");
-        column = document.createElement("div");
-        todoMessage = document.createElement("span");
-
-        row.classList.add("row", "light-primary-color");
-        column.classList.add("col");
-        todoMessage.classList.add("item-message");
-        row.setAttribute("item-id", todoItem.id);
-        row.setAttribute("item-status", todoItem.status);
-        checkElement.classList.add("fa", "fa-check-square-o", "fa-lg", "check-item", "action-item");
-        deleteElement.classList.add( "fa", "fa-times", "fa-lg", "delete-item", "action-item");
-        editElement.classList.add( "fa", "fa-pencil", "fa-lg", "edit-item", "action-item");
-        checkElement.setAttribute("type", "button");
-        deleteElement.setAttribute("type", "button");
-        editElement.setAttribute("type", "button");
-
-        checkColumn = column.cloneNode(true);
-        checkColumn.classList.add("action");
-        deleteColumn = checkColumn.cloneNode(true);
-        editColumn = checkColumn.cloneNode(true);
-
-        todoMessage.appendChild(listText);
-        column.appendChild(todoMessage);
-        checkColumn.appendChild(checkElement);
-        deleteColumn.appendChild(deleteElement);
-        editColumn.appendChild(editElement);
-        row.appendChild(checkColumn);
-        row.appendChild(column);
-        row.appendChild(editColumn);
-        row.appendChild(deleteColumn);
-        
+        var $checkElement  = $("<button>").addClass("fa fa-check-square-o fa-lg check-item action-item")
+                                         .attr("type", "button"),
+            $deleteElement = $("<button>").addClass("fa fa-times fa-lg delete-item action-item")
+                                         .attr("type", "button"),
+            $editElement   = $("<button>").addClass("fa", "fa-pencil", "fa-lg", "edit-item", "action-item")
+                                         .attr("type button"),
+            $column        = $("<div>").addClass("col"),
+            $row           = $("<li>").addClass("row light-primary-color")
+                                         .attr({"item-id" : todoItem.id, "item-status" : todoItem.status}),
+            $todoMessage   = $("<span>").addClass("item-message").text(todoItem.message),
+            $checkColumn   = $column.clone().addClass("action"),
+            $deleteColumn  = $checkColumn.clone(),
+            $editColumn    = $checkColumn.clone();
+            console.log($checkElement);
+            $column.append($todoMessage);
+            $checkColumn.append($checkElement);
+            $deleteColumn.append($deleteElement);
+            $editColumn.append($editElement);
+            $row.append($checkColumn, $column, $editColumn, $deleteColumn)
+           
         if (todoItem.status === STATUS_DONE) {
                 
-            row.classList.add("checked");
+            $row.addClass("checked");
 
         }
         
-        return row;
+        return $row;
         
     }
     
@@ -455,7 +357,7 @@
         $.getJSON("../server/data.json", function (data) {
            console.log(data);
               buildToDoPage("TODO list!", data);
-//            buildATodoList(data);
+              buildATodoList(data);
 //            bindEvents();
 //            
         });
