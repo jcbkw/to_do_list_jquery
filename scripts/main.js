@@ -6,31 +6,35 @@
     var $template;
     
     function buildToDoPage (title, entries) {
+        var $main;
+        
         $template = $("[template]").remove();
-        $("h1").text(title);
+        $template.find("h1").text(title);
+        $main = $template.find(".main-wrapper");
+        $("body").append($main);
 
  }
 
     function buildATodoList(dataObject){
     
         var ulElement = $(".entry-list"),
+            modelRow = $template.find(".row"),
             row;
 
             $.each(dataObject, function (i, note) {
 
-            row = createToDoListItem(note);
+                row = createToDoListItem(note, modelRow);
 
-            ulElement.append(row);  
+            ulElement.append(row);
             
         });
     
     }
     
-    function createToDoListItem (todoItem) {
-
-          var $newRow = $template.clone()
-                                 .css("display", "")
-                                 .attr({
+    function createToDoListItem (todoItem, rowTemplate) {
+        
+          var $newRow = rowTemplate.clone()
+                                   .attr({
                                         
                                     "item-id" : todoItem.id, 
                                     "item-status" : todoItem.status
@@ -38,7 +42,6 @@
                                 });
             
          $newRow.find("span").text(todoItem.message);
-         
 
         if (todoItem.status === STATUS_DONE) {
                 

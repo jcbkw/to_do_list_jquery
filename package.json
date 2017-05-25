@@ -1,0 +1,30 @@
+{
+  "name": "to_do_list_jquery",
+  "version": "1.0.0",
+  "description": "A simple todo list",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "debug": "node-debug server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcbkw/to_do_list_jquery.git"
+  },
+  "keywords": [
+    "bootstrap",
+    "jquery",
+    "nodejs",
+    "todo"
+  ],
+  "author": "",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/jcbkw/to_do_list_jquery/issues"
+  },
+  "homepage": "https://github.com/jcbkw/to_do_list_jquery#readme",
+  "devDependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2"
+  }
+}
