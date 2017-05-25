@@ -3,15 +3,41 @@
     var STATUS_TODO = 0;
     var STATUS_DOING = 1;
     var STATUS_DONE = 2;
+    var $template;
     
     function buildToDoPage (title, entries) {
-              
-        var $newEntryInputWrapper  = $("<div>").addClass("col"),
+ //li template variables and structure           
+        var $checkElement          = $("<button>").addClass("fa fa-check-square-o fa-lg check-item action-item")
+                                         .attr("type", "button"),
+            $deleteElement         = $("<button>").addClass("fa fa-times fa-lg delete-item action-item")
+                                         .attr("type", "button"),
+            $editElement           = $("<button>").addClass("fa fa-pencil fa-lg edit-item action-item")
+                                         .attr("type", "button"),
+            $row                   = $("<li>").addClass("row light-primary-color")
+                                         .attr("template", "template"), 
+            $column                = $("<div>").addClass("col"),
+            $todoMessage           = $("<span>").addClass("item-message"),
+            $checkColumn           = $column.clone().addClass("action"),
+            $deleteColumn          = $checkColumn.clone(),
+            $editColumn            = $checkColumn.clone();
+
+            $column.append($todoMessage);
+            $checkColumn.append($checkElement);
+            $deleteColumn.append($deleteElement);
+            $editColumn.append($editElement);
+            $row.append($checkColumn, $column, $editColumn, $deleteColumn)
+                .css("display", "none");
+
+//Setting template to global var
+            $template              = $row.remove();
+
+//Page variables and structure
+        var $newEntryInputWrapper  = $column.clone(),
             $newEntryTable         = $("<ul>").addClass("table item-list"),
             $figureElement         = $("<figure>").addClass("img-wrapper"),
             $newEntryForm          = $("<form>"),
             $mainElement           = $("<main>").addClass("main-wrapper"),
-            $itemList              = $($newEntryTable).clone().addClass("entry-list"),
+            $itemList              = $newEntryTable.clone().addClass("entry-list"),
             $section1              = $("<section>").addClass("header-wrapper container col-md-5 col-md-offset-4"),
             $section2              = $("<section>").addClass("main-content container col-md-5 col-md-offset-4"),
             $header                = $("<header>").addClass("header text-primary-color"),
@@ -35,19 +61,18 @@
             $newEntryButtonWrapper = $newEntryInputWrapper.clone().addClass("col new-entry-btn-wrap");
 
             $newEntryInputWrapper.addClass("new-item-list");
-
             $figureElement.append($imgElement);
             $addBtn.append($figureElement);
             $newEntryInputWrapper.append($textInput);
             $newEntryButtonWrapper.append($addBtn);
             $newEntryRow.append([$newEntryInputWrapper, $newEntryButtonWrapper]);
             $newEntryTable.append($newEntryRow);
+            $itemList.append($row);
             $newEntryForm.append([$newEntryTable, $itemList]);
             $header.append($h1Element);
             $section1.append($header);
             $section2.append($newEntryForm);
             $mainElement.append([$section1, $section2]);
-            $newEntryButtonWrapper = $newEntryInputWrapper.clone().addClass("col new-entry-btn-wrap"),
             
             $("body").append($mainElement);
             
@@ -69,34 +94,27 @@
     }
     
     function createToDoListItem (todoItem) {
-        
-        var $checkElement  = $("<button>").addClass("fa fa-check-square-o fa-lg check-item action-item")
-                                         .attr("type", "button"),
-            $deleteElement = $("<button>").addClass("fa fa-times fa-lg delete-item action-item")
-                                         .attr("type", "button"),
-            $editElement   = $("<button>").addClass("fa", "fa-pencil", "fa-lg", "edit-item", "action-item")
-                                         .attr("type button"),
-            $column        = $("<div>").addClass("col"),
-            $row           = $("<li>").addClass("row light-primary-color")
-                                         .attr({"item-id" : todoItem.id, "item-status" : todoItem.status}),
-            $todoMessage   = $("<span>").addClass("item-message").text(todoItem.message),
-            $checkColumn   = $column.clone().addClass("action"),
-            $deleteColumn  = $checkColumn.clone(),
-            $editColumn    = $checkColumn.clone();
-            console.log($checkElement);
-            $column.append($todoMessage);
-            $checkColumn.append($checkElement);
-            $deleteColumn.append($deleteElement);
-            $editColumn.append($editElement);
-            $row.append($checkColumn, $column, $editColumn, $deleteColumn)
-           
+        console.log($template);
+
+          var $newRow = $template.clone()
+                                 .css("display", "")
+                                 .attr({
+                                        
+                                    "item-id" : todoItem.id, 
+                                    "item-status" : todoItem.status
+                                
+                                });
+            
+         $newRow.find("span").text(todoItem.message);
+         
+
         if (todoItem.status === STATUS_DONE) {
                 
-            $row.addClass("checked");
+            $newRow.addClass("checked");
 
         }
         
-        return $row;
+        return $newRow;
         
     }
     
