@@ -6,77 +6,10 @@
     var $template;
     
     function buildToDoPage (title, entries) {
- //li template variables and structure           
-        var $checkElement          = $("<button>").addClass("fa fa-check-square-o fa-lg check-item action-item")
-                                         .attr("type", "button"),
-            $deleteElement         = $("<button>").addClass("fa fa-times fa-lg delete-item action-item")
-                                         .attr("type", "button"),
-            $editElement           = $("<button>").addClass("fa fa-pencil fa-lg edit-item action-item")
-                                         .attr("type", "button"),
-            $row                   = $("<li>").addClass("row light-primary-color")
-                                         .attr("template", "template"), 
-            $column                = $("<div>").addClass("col"),
-            $todoMessage           = $("<span>").addClass("item-message"),
-            $checkColumn           = $column.clone().addClass("action"),
-            $deleteColumn          = $checkColumn.clone(),
-            $editColumn            = $checkColumn.clone();
+        $template = $("[template]").remove();
+        $("h1").text(title);
 
-            $column.append($todoMessage);
-            $checkColumn.append($checkElement);
-            $deleteColumn.append($deleteElement);
-            $editColumn.append($editElement);
-            $row.append($checkColumn, $column, $editColumn, $deleteColumn)
-                .css("display", "none");
-
-//Setting template to global var
-            $template              = $row.remove();
-
-//Page variables and structure
-        var $newEntryInputWrapper  = $column.clone(),
-            $newEntryTable         = $("<ul>").addClass("table item-list"),
-            $figureElement         = $("<figure>").addClass("img-wrapper"),
-            $newEntryForm          = $("<form>"),
-            $mainElement           = $("<main>").addClass("main-wrapper"),
-            $itemList              = $newEntryTable.clone().addClass("entry-list"),
-            $section1              = $("<section>").addClass("header-wrapper container col-md-5 col-md-offset-4"),
-            $section2              = $("<section>").addClass("main-content container col-md-5 col-md-offset-4"),
-            $header                = $("<header>").addClass("header text-primary-color"),
-            $addBtn                = $("<button>").addClass("plus-button").attr("type", "submit"),
-            $newEntryRow           = $("<li>").addClass("row light-primary-color"),
-            $imgElement            = $("<div>").addClass("header-icon fa fa-plus-circle").attr({
-
-                                        src : "../images/plus-4-48.png",
-                                        alt : "Plus one"
-
-                                    }),
-            $textInput             = $("<input>").addClass("new-entry seamless").attr({
-                            
-                                        name: "message",
-                                        autofocus: "autofocus",
-                                        autocomplete: "off",
-                                        placeholder: "Enter a new note"
-                                    
-                                    }),
-            $h1Element             = $("<h1>").text(title),
-            $newEntryButtonWrapper = $newEntryInputWrapper.clone().addClass("col new-entry-btn-wrap");
-
-            $newEntryInputWrapper.addClass("new-item-list");
-            $figureElement.append($imgElement);
-            $addBtn.append($figureElement);
-            $newEntryInputWrapper.append($textInput);
-            $newEntryButtonWrapper.append($addBtn);
-            $newEntryRow.append([$newEntryInputWrapper, $newEntryButtonWrapper]);
-            $newEntryTable.append($newEntryRow);
-            $itemList.append($row);
-            $newEntryForm.append([$newEntryTable, $itemList]);
-            $header.append($h1Element);
-            $section1.append($header);
-            $section2.append($newEntryForm);
-            $mainElement.append([$section1, $section2]);
-            
-            $("body").append($mainElement);
-            
-    }
+ }
 
     function buildATodoList(dataObject){
     
@@ -94,7 +27,6 @@
     }
     
     function createToDoListItem (todoItem) {
-        console.log($template);
 
           var $newRow = $template.clone()
                                  .css("display", "")
