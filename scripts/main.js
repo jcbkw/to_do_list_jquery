@@ -23,7 +23,7 @@
 
             $.each(dataObject, function (i, note) {
 
-                row = createToDoListItem(note, modelRow);
+                row = createToDoListItem(note);
 
             ulElement.append(row);
             
@@ -31,15 +31,16 @@
     
     }
     
-    function createToDoListItem (todoItem, rowTemplate) {
+    function createToDoListItem (todoItem) {
         
-          var $newRow = rowTemplate.clone()
-                                   .attr({
+          var $newRow = $template.find(".row")
+                                 .clone()
+                                 .attr({
                                         
                                     "item-id" : todoItem.id, 
                                     "item-status" : todoItem.status
                                 
-                                });
+                                 });
             
          $newRow.find("span").text(todoItem.message);
 
@@ -53,44 +54,66 @@
         
     }
     
+    /** Standard jQuery AJAX request
+     * 
+     * @param {*} url 
+     * @param {*} method 
+     * @param {*} data 
+     * @param {*} callback 
+     */
+    
+    function ajaxDefaultRequest(url, method, data, callback){
+
+        $.ajax({
+
+            url: url,
+            type: method,
+            data: data,
+            success: callback
+
+        }) 
+
+    }
+
+
     function markedItem(btn){
 
-        var row = btn.parentNode.parentNode, 
-            id = row.getAttribute("item-id"),
-            status = parseInt(row.getAttribute("item-status"), 10),
+        var $row = $(btn).closest(".row"), 
+            $id = $row.attr("item-id"),
+            status = parseInt($row.attr("item-status"), 10),
             payload = {
-                id: id,
+                id: $id,
                 status: status === STATUS_DONE 
                         ? STATUS_TODO 
                         : STATUS_DONE 
             };
              
-        xhrPatch("/entries", payload, function (error){
+        ajaxDefaultRequest("/entries", "PATCH", payload,
+                            function (request, status) {
 
-            if (error) {
+            if (status === "error") {
                 
-                return alert(error);
+                return alert(status);
                 
             }
             
             if (payload.status === STATUS_DONE) {
 
-                row.classList.add("checked");
+                $row.addClass("checked");
                 
             }
             else {
 
-                row.classList.remove("checked");
+                $row.removeClass("checked");
                 
             }
             
-            row.setAttribute("item-status", payload.status);
-           
+            $row.attr("item-status", payload.status);
          
         });
     
-    }
-    
+   }
+
     /* Update the delete function
      * 
      * @param {type} btn
@@ -98,40 +121,40 @@
      */
      function deleteItem(btn){
 
-        var row = btn.parentNode.parentNode, 
-            id = row.getAttribute("item-id"),
+        var $row = $(btn).closest(".row"); 
+            id = $row.attr("item-id"),
             payload = {
                 id: id
             };
-             
-        xhrDelete("/entries", payload, function (error){
+        ajaxDefaultRequest("/entries", "DELETE", payload, 
+                            function (request, status){
 
-            if (error) {
+                        if (status === "error") {
+                            
+                            return alert(status);
+                            
+                        }
+                    })
                 
-                return alert(error);
-                
-            }
-            
-            row.parentNode.removeChild(row);
-           
+        $row.remove();
          
-        });
-
     }
     
     function editItem (message) {
 
-        if (message.style.display !== "none") {
-            
-            var updateEntryField = document.createElement("input");
-        
-            updateEntryField.classList.add("seamless", "editing");
-            updateEntryField.value = message.firstChild.nodeValue;
-            updateEntryField.addEventListener("blur", onItemBlurred, false);
-            message.parentNode.appendChild(updateEntryField);
-            message.style.display = "none";
 
-            putCaretInFront(updateEntryField);
+        if ($(message).css("display") !== "none") {
+            
+            var $updateEntryField = $("<input>");
+        
+            $updateEntryField.addClass("seamless", "editing");
+            $updateEntryField.val(message.text());
+            console.log("hello");
+            $updateEntryField.focusout(onItemBlurred);
+            $(message).parent().append($updateEntryField);
+            $(message).css("display", "none");
+
+            putCaretInFront($updateEntryField);
             
         }
         
@@ -139,31 +162,29 @@
     
     function saveEditItem (input) {
         
-         var row = input.parentNode.parentNode,
-             id = row.getAttribute("item-id"),
-            payload = {
-                id: id,
-                message: input.value
-            };
+         var $row = $(input).closest(".row"),
+             $id = $row.attr("item-id"),
+             payload = {
+                id: $id,
+                message: $(input).val()
+             };
            
         
-        xhrPatch("/entries", payload, function (error){
+        xhrPatch("/entries", payload, function (result, status){
             
-            if (error) {
+            if (status === "error") {
                 
-                return alert(error);
+                return alert(status);
                 
             }
             
-            var text = document.createTextNode(payload.message);
-            var message = row.querySelector(".item-message");
+            var text = payload.message;
+            var $message = $row.find(".item-message");
                   
-            input.removeEventListener("blur", onItemBlurred, false);
-            input.parentNode.removeChild(input);
-            message.removeChild(message.firstChild);
-            message.appendChild(text);
+            $(input).remove();
+            $message.text(text);
                             
-            message.style.display = "";
+            $message.css("display", "");
             
         });  
 
@@ -202,8 +223,8 @@
     
     function onItemBlurred(e){
         
-        if (e.target.classList.contains("editing")){
-             
+        if ($(e.target).hasClass("editing")){
+             console.log (e.target);
             saveEditItem(e.target);
 
         }
@@ -215,17 +236,15 @@
       
     function bindEvents () {
        
-        document.getElementsByTagName("form")[0]
-                .addEventListener("submit", formSubmitHandler, false);
+        $("form").on("submit", formSubmitHandler);
 
-        document.querySelector("main")
-                .addEventListener("click", handleItemClick, false);
+        $("main").on("click", handleItemClick);
         
-        document.querySelector("main")
-                .addEventListener("dblclick", handleItemDblClick, false);
+        // document.querySelector("main")
+        //         .addEventListener("dblclick", handleItemDblClick, false);
         
-        document.querySelector("main")
-                .addEventListener("keyup", handleKeyup, false);
+        // document.querySelector("main")
+        //         .addEventListener("keyup", handleKeyup, false);
         
     }
 
@@ -233,9 +252,9 @@
         
         e.preventDefault();
 
-        var form = this,
-            input = form.querySelector(".new-entry"),
-            payload = {message: input.value};
+        var $input = $(this).find(".new-entry");
+        
+            payload = {message: $input.val()};
 
         if (payload.message.trim() === "") {
             
@@ -243,18 +262,15 @@
             
         }
 
-        xhrPost("/entries", payload, function(error, newEntry){
-            
-            if (!error) {
+        $.post("/entries", payload, function(result, status, xhr){
 
-                var todoItem = JSON.parse(newEntry);
+             if (status === "success") {
 
-                document.querySelector(".entry-list").
-                        insertBefore(createToDoListItem(todoItem), 
-                        document.querySelector(".entry-list").firstChild
-                );
+                var $newEntry = createToDoListItem(result);
+
+                $(".entry-list").prepend($newEntry);
                 
-                input.value = "";
+                $input.val("");
             }
             else  {
                 
@@ -262,31 +278,33 @@
             
             }
                 
-        });
+        }, );
         
      }
         
     function handleItemClick (e){
+       
 
-        if (e.target.classList.contains("delete-item")){
-
-            //the delete button was clicked
-            deleteItem(e.target);
-
-        }
-        else if (e.target.classList.contains("check-item")){
+        if ($(e.target).hasClass("delete-item")){
 
             //the delete button was clicked
-            markedItem(e.target);
+            deleteItem($(e.target));
 
         }
-        else if (e.target.classList.contains("edit-item")){
+        else if ($(e.target).hasClass("check-item")){
+
+            //the complete button was clicked
+            markedItem($(e.target));
+
+        }
+        else if ($(e.target).hasClass("edit-item")){
 
             //the edit button was clicked
             
             // fin the message
-            var message = e.target.parentNode.parentNode.querySelector(".item-message");
-            
+            var message = $(e.target).closest(".row").find(".item-message");
+            //may need to add a conditional statement if e.target display is
+            // none 
             editItem(message);
 
         }
@@ -307,11 +325,10 @@
    
     $(document).ready(function () {
         debugger;
-        $.getJSON("../server/data.json", function (data) {
-           console.log(data);
+        $.getJSON("/entries", function (data) {
               buildToDoPage("TODO list!", data);
               buildATodoList(data);
-//            bindEvents();
+              bindEvents();
 //            
         });
         
