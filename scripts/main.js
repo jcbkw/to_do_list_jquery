@@ -145,12 +145,9 @@
 
         if ($(message).css("display") !== "none") {
             
-            var $updateEntryField = $("<input>");
-        
-            $updateEntryField.addClass("seamless", "editing");
-            $updateEntryField.val(message.text());
-            console.log("hello");
-            $updateEntryField.focusout(onItemBlurred);
+            var $updateEntryField = $("<input>").addClass("seamless editing")
+                                                .val(message.text())
+                                                .blur(onItemBlurred);
             $(message).parent().append($updateEntryField);
             $(message).css("display", "none");
 
@@ -170,7 +167,8 @@
              };
            
         
-        xhrPatch("/entries", payload, function (result, status){
+        ajaxDefaultRequest("/entries", "PATCH", payload, 
+                            function (result, status){
             
             if (status === "error") {
                 
@@ -224,7 +222,7 @@
     function onItemBlurred(e){
         
         if ($(e.target).hasClass("editing")){
-             console.log (e.target);
+             
             saveEditItem(e.target);
 
         }
