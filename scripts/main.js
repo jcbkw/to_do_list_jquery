@@ -145,13 +145,13 @@
 
         if ($(message).css("display") !== "none") {
             
-            var $updateEntryField = $("<input>").addClass("seamless editing")
+            var $updateEntryField = $("<input type='text'>").addClass("seamless editing")
                                                 .val(message.text())
                                                 .blur(onItemBlurred);
             $(message).parent().append($updateEntryField);
             $(message).css("display", "none");
 
-            putCaretInFront($updateEntryField);
+            putCaretInFront($updateEntryField.get(0));
             
         }
         
@@ -192,12 +192,13 @@
         
         if(e.which === 13) {
             
-            document.querySelector(".new-entry").focus();
+            $(document).find(".new-entry").focus();
             
         }
         
     }
-    
+
+
     function putCaretInFront (input){
         
         // http://stackoverflow.com/questions/2127221/move-cursor-to-the-beginning-of-the-input-field
@@ -219,6 +220,7 @@
         
     }
     
+    
     function onItemBlurred(e){
         
         if ($(e.target).hasClass("editing")){
@@ -238,11 +240,9 @@
 
         $("main").on("click", handleItemClick);
         
-        // document.querySelector("main")
-        //         .addEventListener("dblclick", handleItemDblClick, false);
+        $("main").on("dblclick", handleItemDblClick);
         
-        // document.querySelector("main")
-        //         .addEventListener("keyup", handleKeyup, false);
+        $("main").on("keyup", handleKeyup);
         
     }
 
@@ -311,7 +311,7 @@
    
     function handleItemDblClick (e){
 
-        if (e.target.classList.contains("item-message")){
+        if ( $(e.target).hasClass("item-message")){
 
             //the edit button was clicked
             editItem(e.target);
@@ -322,7 +322,6 @@
    
    
     $(document).ready(function () {
-        debugger;
         $.getJSON("/entries", function (data) {
               buildToDoPage("TODO list!", data);
               buildATodoList(data);
