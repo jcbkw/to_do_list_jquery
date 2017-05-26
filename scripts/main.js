@@ -1,4 +1,4 @@
-(function(){  
+$(function(){  
 
     var STATUS_TODO = 0;
     var STATUS_DOING = 1;
@@ -17,30 +17,25 @@
 
     function buildATodoList(dataObject){
     
-        var ulElement = $(".entry-list"),
-            modelRow = $template.find(".row"),
-            row;
+        var $ulElement = $(".entry-list"),
+            $modelRow = $template.find(".row");
 
-            $.each(dataObject, function (i, note) {
+        $.each(dataObject, function (i, note) {
 
-                row = createToDoListItem(note);
+            $ulElement.append(createToDoListItem(note, $modelRow ));
 
-            ulElement.append(row);
-            
         });
     
     }
     
-    function createToDoListItem (todoItem) {
+    function createToDoListItem (todoItem, $rowTemplate) {
         
-          var $newRow = $template.find(".row")
-                                 .clone()
-                                 .attr({
+         var $newRow = $rowTemplate.clone()
+                                    .attr({
                                         
-                                    "item-id" : todoItem.id, 
-                                    "item-status" : todoItem.status
-                                
-                                 });
+                                        "item-id" : todoItem.id, 
+                                        "item-status" : todoItem.status
+                                    });
             
          $newRow.find("span").text(todoItem.message);
 
@@ -62,7 +57,7 @@
      * @param {*} callback 
      */
     
-    function ajaxDefaultRequest(url, method, data, callback){
+    function ajaxRequest(url, method, data, callback){
 
         $.ajax({
 
@@ -76,9 +71,9 @@
     }
 
 
-    function markedItem(btn){
+    function markedItem($btn){
 
-        var $row = $(btn).closest(".row"), 
+        var $row = $btn.closest(".row"), 
             $id = $row.attr("item-id"),
             status = parseInt($row.attr("item-status"), 10),
             payload = {
@@ -88,7 +83,7 @@
                         : STATUS_DONE 
             };
              
-        ajaxDefaultRequest("/entries", "PATCH", payload,
+        ajaxRequest("/entries", "PATCH", payload,
                             function (request, status) {
 
             if (status === "error") {
@@ -126,7 +121,7 @@
             payload = {
                 id: id
             };
-        ajaxDefaultRequest("/entries", "DELETE", payload, 
+        ajaxRequest("/entries", "DELETE", payload, 
                             function (request, status){
 
                         if (status === "error") {
@@ -140,16 +135,16 @@
          
     }
     
-    function editItem (message) {
+    function editItem ($message) {
 
 
-        if ($(message).css("display") !== "none") {
+        if ($message.css("display") !== "none") {
             
             var $updateEntryField = $("<input type='text'>").addClass("seamless editing")
-                                                .val(message.text())
+                                                .val($message.text())
                                                 .blur(onItemBlurred);
-            $(message).parent().append($updateEntryField);
-            $(message).css("display", "none");
+            $message.parent().append($updateEntryField);
+            $message.css("display", "none");
 
             putCaretInFront($updateEntryField.get(0));
             
@@ -159,15 +154,16 @@
     
     function saveEditItem (input) {
         
-         var $row = $(input).closest(".row"),
+         var $input = $(input), 
+             $row = $input.closest(".row"),
              $id = $row.attr("item-id"),
              payload = {
                 id: $id,
-                message: $(input).val()
+                message: $input.val()
              };
            
         
-        ajaxDefaultRequest("/entries", "PATCH", payload, 
+        ajaxRequest("/entries", "PATCH", payload, 
                             function (result, status){
             
             if (status === "error") {
@@ -176,13 +172,11 @@
                 
             }
             
-            var text = payload.message;
-            var $message = $row.find(".item-message");
-                  
-            $(input).remove();
-            $message.text(text);
-                            
-            $message.css("display", "");
+            $input.remove();
+            
+            $row.find(".item-message")
+                 .text(payload.message)
+                 .css("display", "");
             
         });  
 
@@ -238,11 +232,11 @@
        
         $("form").on("submit", formSubmitHandler);
 
-        $("main").on("click", handleItemClick);
-        
-        $("main").on("dblclick", handleItemDblClick);
-        
-        $("main").on("keyup", handleKeyup);
+        $("main").on("click", ".delete-item", onDeleteButtonClick)
+                 .on("click", ".edit-item", onEditButtonClick)
+                 .on("click", ".check-item", onCheckboxClick)
+                 .on("dblclick", handleItemDblClick)
+                 .on("keyup", handleKeyup);
         
     }
 
@@ -260,7 +254,7 @@
             
         }
 
-        $.post("/entries", payload, function(result, status, xhr){
+        $.post("/entries", payload, function(result, status){
 
              if (status === "success") {
 
@@ -272,7 +266,7 @@
             }
             else  {
                 
-                alert(error + " try again");
+                alert(" try again");
             
             }
                 
@@ -280,55 +274,46 @@
         
      }
         
-    function handleItemClick (e){
-       
+    function onCheckboxClick (e){
 
-        if ($(e.target).hasClass("delete-item")){
+        markedItem($(e.target));
 
-            //the delete button was clicked
+    }
+
+    function onDeleteButtonClick (e) {
+
+        if (confirm("Really delete?")) {
+
             deleteItem($(e.target));
-
-        }
-        else if ($(e.target).hasClass("check-item")){
-
-            //the complete button was clicked
-            markedItem($(e.target));
-
-        }
-        else if ($(e.target).hasClass("edit-item")){
-
-            //the edit button was clicked
-            
-            // fin the message
-            var message = $(e.target).closest(".row").find(".item-message");
-            //may need to add a conditional statement if e.target display is
-            // none 
-            editItem(message);
-
-        }
         
+        }
+
+    }
+
+    function onEditButtonClick (e) {
+
+        editItem($(e.target).closest(".row").find(".item-message"));
+            
     }
    
     function handleItemDblClick (e){
-
-        if ( $(e.target).hasClass("item-message")){
-
+        var $eventTarget = $(e.target);
+        if ( $eventTarget.hasClass("item-message")){
+  
             //the edit button was clicked
-            editItem(e.target);
+            editItem($eventTarget);
 
         }
 
     }
    
    
-    $(document).ready(function () {
+    
         $.getJSON("/entries", function (data) {
               buildToDoPage("TODO list!", data);
               buildATodoList(data);
               bindEvents();
 //            
         });
-        
-    }, /*propagate*/ false);
- 
-})();
+      
+});
