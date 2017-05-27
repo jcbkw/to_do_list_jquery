@@ -3,40 +3,28 @@ $(function(){
     var STATUS_TODO = 0;
     var STATUS_DOING = 1;
     var STATUS_DONE = 2;
-    var $template;
+    var templates = {};
     
-    function buildToDoPage (title, entries, callback) {
-        var $main;
-        
-        $.get("templates/layout.html", function (layoutHtml) {
+    function buildToDoPage (title, entries) {
 
-            $main = $(layoutHtml);
+        var $main = $(templates.layout);
             $main.find("h1").text(title);
 
-            $("body").append($main);
-
-            callback();
-
-        });
+       $("body").append($main);
 
  }
 
-    function buildATodoList (dataObject, callback){
+    function buildATodoList (dataObject) {
         
-        $.get("templates/row.html", function (rowHtml) {
-            
             var $ulElement = $(".entry-list"),
-                $row = $(rowHtml);
+                $row = $(templates.row);
 
-            $.each(dataObject, function (i, note) {
+        $.each(dataObject, function (i, note) {
 
-                $ulElement.append(createToDoListItem(note, $row));
+            $ulElement.append(createToDoListItem(note, $row));
 
-            });
+        });
 
-             callback();
-        })
-    
     }
     
     function createToDoListItem (todoItem, $rowTemplate) {
@@ -325,58 +313,65 @@ $(function(){
      * @param {string[]} urls The urls array
      * @param {function(templates: object)} callback the function to call when done
      */
-    // getTemplates(['templates/layout', 'templates/row'], function (templates) {
+    // getTemplates('templates/', ['layout', 'row'], function (tpls) {
     //
-    //  console.dir(templates);
+    //  console.dir(tpls);
     //  {
-    //     "templates/layout" : "<main ...",
-    //     "templates/row" : "<li ..."
+    //     "layout" : "<main ...",
+    //     "row" : "<li ..."
     //  }
     //  
     // });
-    function getTemplates (urls, callback) {
+    function getTemplates (path, names, callback) {
 
-        var templateObject = {};
+         var index = -1,
+             templateMap = {};
 
-        $(urls).each(function (i, url) {
+        function loop (name) { 
 
-            $.get(url + ".html", function (result, status, xhr){
+            $.get(path + name + ".html", function (html, status) {
 
-
-                if (status === "success") {
-
-                    templateObject[url] = result;
-
-                    console.log(templateObject);
-                    
-                }
-
-                else {
-
-                 console.log(xhr); 
-                }
-
+                templateMap[name] = status === "success" ? html : null;
+                next();
+                
             });
 
-      })
+        }
 
-        callback();
+        function next () {
+            
+            index += 1;
+
+            if (index < names.length) {
+
+                loop(names[index]);
+
+            }           
+            else {
+
+                callback(templateMap);
+                
+            }
+
+        }
+
+        next();
+
+    
   }
     
-    $.getJSON("/entries", function (data) {
+    $.getJSON("/entries", function (entries) {
         
-        getTemplates(['templates/layout', 'templates/row'], function () {
+        getTemplates('templates/', ['layout', 'row'], function (tpls) {
 
-            console.log(this); 
+            templates = tpls;
 
-        });
-
-        buildToDoPage("TODO list!", data, function () {
-
-            buildATodoList(data, bindEvents);
+            buildToDoPage("TODO list!", entries);            
+            buildATodoList(entries);
+            bindEvents();
         
         });
-        
+
     });
       
 });
