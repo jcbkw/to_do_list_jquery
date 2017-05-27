@@ -28,7 +28,7 @@ $(function(){
     }
     
     function createToDoListItem (todoItem, $rowTemplate) {
-        
+        console.log($rowTemplate);
          var $newRow = $rowTemplate.clone()
                                     .attr({
                                         
@@ -257,7 +257,7 @@ $(function(){
 
              if (status === "success") {
 
-                var $newEntry = createToDoListItem(result);
+                var $newEntry = createToDoListItem(result, $(templates.row));
 
                 $(".entry-list").prepend($newEntry);
                 
