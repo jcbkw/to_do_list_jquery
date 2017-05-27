@@ -1,32 +1,32 @@
 {
     "15c421e7cd0": {
-        "lastModified": 1495836135309,
+        "lastModified": 1495844972236,
         "message": "Nice two",
         "status": 0,
         "id": "15c421e7cd0"
     },
     "15c423f580a": {
-        "lastModified": 1495833940938,
+        "lastModified": 1495841827268,
         "message": "3rd Try",
-        "status": 2,
+        "status": 0,
         "id": "15c423f580a"
     },
     "15c45e7760b": {
-        "lastModified": 1495822391314,
+        "lastModified": 1495841828751,
         "message": "Try again",
-        "status": 2,
+        "status": 0,
         "id": "15c45e7760b"
     },
     "15c45e7a4dc": {
-        "lastModified": 1495822389940,
+        "lastModified": 1495844979621,
         "message": "Hello there",
-        "status": 2,
+        "status": 0,
         "id": "15c45e7a4dc"
     },
     "15c45f62ff8": {
-        "lastModified": 1495822395198,
+        "lastModified": 1495841830609,
         "message": "Play",
-        "status": 2,
+        "status": 0,
         "id": "15c45f62ff8"
     }
 }

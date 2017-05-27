@@ -5,26 +5,38 @@ $(function(){
     var STATUS_DONE = 2;
     var $template;
     
-    function buildToDoPage (title, entries) {
+    function buildToDoPage (title, entries, callback) {
         var $main;
         
-        $template = $("[template]").remove();
-        $template.find("h1").text(title);
-        $main = $template.find(".main-wrapper");
-        $("body").append($main);
+        $.get("templates/layout.html", function (layoutHtml) {
+
+            $main = $(layoutHtml);
+            $main.find("h1").text(title);
+
+            $("body").append($main);
+
+            callback();
+
+        });
 
  }
 
-    function buildATodoList(dataObject){
+    function buildATodoList(dataObject, callback){
     
         var $ulElement = $(".entry-list"),
-            $modelRow = $template.find(".row");
+            $row;    
 
-        $.each(dataObject, function (i, note) {
+        $.get("templates/row.html", function (rowLayout) {
+            $row = $(rowLayout);
 
-            $ulElement.append(createToDoListItem(note, $modelRow ));
+            $.each(dataObject, function (i, note) {
 
-        });
+                $ulElement.append(createToDoListItem(note, $row));
+
+            });
+
+             callback();
+        })
     
     }
     
@@ -310,9 +322,17 @@ $(function(){
    
     
         $.getJSON("/entries", function (data) {
-              buildToDoPage("TODO list!", data);
-              buildATodoList(data);
-              bindEvents();
+
+            buildToDoPage("TODO list!", data, function () {
+
+                buildATodoList(data, function () {
+
+                    bindEvents();
+
+                });
+            
+
+            });
 //            
         });
       
