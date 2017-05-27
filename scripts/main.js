@@ -21,13 +21,12 @@ $(function(){
 
  }
 
-    function buildATodoList(dataObject, callback){
-    
-        var $ulElement = $(".entry-list"),
-            $row;    
-
-        $.get("templates/row.html", function (rowLayout) {
-            $row = $(rowLayout);
+    function buildATodoList (dataObject, callback){
+        
+        $.get("templates/row.html", function (rowHtml) {
+            
+            var $ulElement = $(".entry-list"),
+                $row = $(rowHtml);
 
             $.each(dataObject, function (i, note) {
 
@@ -319,21 +318,65 @@ $(function(){
 
     }
    
-   
-    
-        $.getJSON("/entries", function (data) {
+    /**
+     * loads the templates at the given urls and
+     * returns the results as a JavaScript object.
+     *  
+     * @param {string[]} urls The urls array
+     * @param {function(templates: object)} callback the function to call when done
+     */
+    // getTemplates(['templates/layout', 'templates/row'], function (templates) {
+    //
+    //  console.dir(templates);
+    //  {
+    //     "templates/layout" : "<main ...",
+    //     "templates/row" : "<li ..."
+    //  }
+    //  
+    // });
+    function getTemplates (urls, callback) {
 
-            buildToDoPage("TODO list!", data, function () {
+        var templateObject = {};
 
-                buildATodoList(data, function () {
+        $(urls).each(function (i, url) {
 
-                    bindEvents();
+            $.get(url + ".html", function (result, status, xhr){
 
-                });
-            
+
+                if (status === "success") {
+
+                    templateObject[url] = result;
+
+                    console.log(templateObject);
+                    
+                }
+
+                else {
+
+                 console.log(xhr); 
+                }
 
             });
-//            
+
+      })
+
+        callback();
+  }
+    
+    $.getJSON("/entries", function (data) {
+        
+        getTemplates(['templates/layout', 'templates/row'], function () {
+
+            console.log(this); 
+
         });
+
+        buildToDoPage("TODO list!", data, function () {
+
+            buildATodoList(data, bindEvents);
+        
+        });
+        
+    });
       
 });
